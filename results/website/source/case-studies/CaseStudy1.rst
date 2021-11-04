@@ -2,14 +2,21 @@
 Case Study 1
 ============
 
-This study had the goal of predicting interest rates, using data from Lending Club, 
+This study has the goal of predicting interest rates using data from Lending Club, 
 a peer-to-peer lending platform.
+
+Data Set
+--------
+
+The dataset used is a subset of anonymized loan applications from Lending Club.
+It can be found `here <https://www.openintro.org/data/index.php?data=loans_full_schema>`_. The only issue dealt with in using this data was a small
+number of missing values for some of the features.
 
 EDA
 ---
 
 Below are visualizations which give insight into the dataset, giving clues as to which
-approaches may be successful for interest rate prediction.
+approaches may be successful for our use case.
 
 Geographic Loan Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -19,10 +26,10 @@ Geographic Loan Distribution
    :target: ./files/us_heatmap.png
    :alt: United States Loan Heatmap
 
-The number of loan applications looks to be roughly proportional to the overall 
-population of the state. We will remove state from consideration as a feature, as
-it would result in 50 extra features, one-hot encoded. This would result in 
-unnecessarily long training times.
+The number of loan applications per state looks to be roughly proportional to the 
+state population. Thus, we remove ``state`` from consideration. Keeping it in 
+the data would result in a large number of extra features after one-hot encoding, not 
+useful in interest prediction.
 
 Interest Rate Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -95,7 +102,7 @@ There look to be weak and possibly non-linear relations between both
 Preprocessing
 -------------
 
-Preprocessing consisted of the following:
+Preprocessing of the overall dataset consisted of the following:
 
 
 * Deletion of bloated/useless features
@@ -117,7 +124,7 @@ Preprocessing consisted of the following:
   * Given more time, would evaluate models using cross-validation
 
 These pre-processing steps were performed for both the train set, and test set, but
-separately as to not introduce unintended biases to the model.
+separately as to not introduce unintended biases to the model:
 
 
 * Null Value Replacement
@@ -133,8 +140,7 @@ separately as to not introduce unintended biases to the model.
 Interest Rate Prediction as a Classification Problem
 ----------------------------------------------------
 
-Initially, I approached this a classfication problem. Below is a table of model
-results on the validation set (0-1 Loss). Evidently, this approach was a spectacular failure.
+Initially, I approached this a classfication problem with discrete interest rates as classes. The below table shows results on the validation set (0-1 Loss). Evidently, this approach was a spectacular failure.
 
 .. list-table::
    :header-rows: 1
@@ -151,8 +157,8 @@ results on the validation set (0-1 Loss). Evidently, this approach was a spectac
 
 *Neural net used linear layers with ReLU activation functions.*
 
-Interest Rate Predicion as a Regression Problem
------------------------------------------------
+Interest Rate Prediction as a Regression Problem
+------------------------------------------------
 
 
 .. image:: ./files/training_loss_normal.png
@@ -173,7 +179,8 @@ Including ``sub_grade`` and ``grade``
    :alt: Training Loss Graph
 
 
-As mentioned in the EDA, including ``sub_grade`` and ``grade`` greatly improved model RMSE, 
+To show the near-direct relation between ``sub_grade`` and ``grade`` with interest rate, I
+ran the NN including these features. As expected,  including ``sub_grade`` and ``grade`` greatly improved model RMSE, 
 resulting in a validation RMSE of 0.407 percentage points. The RMSE while training is shown above.
 
 Assumptions Made
